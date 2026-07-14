@@ -93,6 +93,53 @@ class PaymentController extends Controller
             $next_charge = (new DateTime())->modify('+' . $payment->days . ' days')->getTimestamp();
             $user->recurrent_time = $next_charge;
 
+            $PACKAGES = [
+                'trial' => [
+                    'videos'    => 1,
+                    'price'     => 100,
+                    'days'      => 1,
+                    'recurrent' => '5',
+                    'emoji'     => '',
+                ],
+                '2' => [
+                    'videos'    => 2,
+                    'price'     => 249,
+                    'days'      => 30,
+                    'recurrent' => '2',
+                    'emoji'     => '',
+                ],
+                '5' => [
+                    'videos'    => 5,
+                    'price'     => 499,
+                    'days'      => 30,
+                    'recurrent' => '5',
+                    'emoji'     => '',
+                ],
+                '10' => [
+                    'videos'    => 10,
+                    'price'     => 899,
+                    'days'      => 30,
+                    'recurrent' => '10',
+                    'emoji'     => '🙈',
+                ],
+                '25' => [
+                    'videos'    => 25,
+                    'price'     => 1990,
+                    'days'      => 30,
+                    'recurrent' => '25',
+                    'emoji'     => '💥',
+                ],
+                '60' => [
+                    'videos'    => 60,
+                    'price'     => 4490,
+                    'days'      => 30,
+                    'recurrent' => '60',
+                    'emoji'     => '💎',
+                ],
+            ];
+
+            $user->videos += $PACKAGES[$payment->package]['videos'];
+
             $user->save();
             $payment->is_bought = true;
 
