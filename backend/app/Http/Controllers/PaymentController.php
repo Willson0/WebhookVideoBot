@@ -105,6 +105,15 @@ class PaymentController extends Controller
                 'parse_mode' => 'HTML'
             ];
 
+            if ($user->referal_user_from != 0) {
+                $referal = User::find($user->referal_user_from);
+                if ($referal) {
+                    $plus = round($payment->rub_summ * 0.3);
+                    $referal->referral_balance += $plus;
+                    $referal->save();
+                }
+            }
+
             $url = "https://api.telegram.org/bot{$botToken}/sendMessage";
             Http::post($url, $data);
         } else if (($request->event === "payment.canceled" || $request->status === "canceled") && $payment->is_autopayment) {
