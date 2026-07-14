@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class User extends Model
+class Payment extends Model
 {
     protected $guarded = false;
     const UPDATED_AT = "modified_at";
