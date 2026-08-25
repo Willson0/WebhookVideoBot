@@ -71,6 +71,8 @@ class PaymentController extends Controller
 
     public function webhook (Request $request)
     {
+        $tg = config('video.tg');
+
         Log::info($request);
         $payment = Payment::where("payment_id", $request->object["id"] ?? $request["id"])->first();
 
@@ -161,8 +163,22 @@ class PaymentController extends Controller
                 }
             }
 
-            $url = "https://api.telegram.org/bot{$botToken}/sendMessage";
-            Http::post($url, $data);
+            if ($tg)
+                Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", $data);
+            else {
+                $resp = Http::withHeaders([
+                    'Authorization' => $botToken
+                ])->post("https://platform-api.max.ru/messages?user_id=$user->id&chat_id=$user->chat_id", [
+                    'text' => $text,
+                    "format" => "html"
+                ]);
+                try {
+                    $data = json_decode($resp->getBody()->getContents(), true);
+                    Log::debug("Response: " . json_encode($data, JSON_UNESCAPED_UNICODE));
+                } catch (Exception $e) {
+                    Log::critical($e->getMessage());
+                }
+            }
         } else if (($request->event === "payment.canceled" || $request->status === "canceled") && $payment->is_autopayment) {
             $user = User::find($payment->user_id);
             if (time() >= $user->recurrent_time) $user->recurrent_package = "0";
