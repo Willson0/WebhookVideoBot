@@ -63,8 +63,6 @@
 ### Шаги установки
 
 ```bash
-git clone https://github.com/your-username/your-repository.git
-cd your-repository
 composer install
 cp .env.example .env
 php artisan key:generat
